@@ -145,7 +145,39 @@ Computer Science class.
 TBD
 
 \section{Background}
+	This section is an introduction to Clojure and the clojure.spec library. 
 	\subsection{Clojure}
+	Unlike popular mainstream languages such as Java or C++, Clojure shares some distinct features with other LISP dialects. 
+	One is the use of parentheses in syntax. In Clojure, every instruction or expression is enclosed by parentheses. To invoke a 
+	function, you need to specify a function name right after the opening parenthesis and then list all arguments before the 
+	closing parenthesis. Parentheses are required even functions that do not take any arguments. This form of notation is 
+	called prefix-notation which is also a feature of Clojure. A simple addition of 3 and 4 in Clojure looks like: 
+	\begin{verbatim}
+	(+ 3 4)
+	\end{verbatim}
+	This syntax might look odd, but it is very powerful and easy to parse for machines since the system does not need to 
+	calculate operator precedence. 
+
+	Another functional programming feature that Clojure adopted is immutable data structures. In Clojure, once you bind a 
+	name to a value, you cannot change the associated value. We call the name of the binding as symbol. To change the 
+	binding value, you need to re-define the constant with the same symbol which is essentially a different binding. This is 
+	the main source of confusion for developers from object oriented programming background since they are used to 
+	change values of a variable. One huge benefit of using immutable data types is minimizing side effects, which means 
+	developers do not need to worry about variables being modified from unanticipated places.
+
+	Among various data structures that Clojure supports, an abstract sequential data type called sequences is very unique in 
+	a way they behave; a sequence can be lazy. A sequence being lazy means the element(s) of them can potentially be realized even though they do not exist now. 
+	In other words, a lazy sequence is like a set of rules that is able to generate elements according to them.
+	They just exist as a type until some functions force the lazy sequence to be evaluated. Because of its laziness, it is possible 
+	for a lazy sequence to represent an infinite value. The following is a function that returns a lazy sequence that stores the 
+	Fibonacci sequence when the starting values are n1 and n2. Theoretically, it can generate elements of the Fibonacci 
+	sequence infinitely. 
+	\begin{verbatim}
+	(defn fibonacci [n1 n2]
+		(lazy-seq (cons n1 (fibonacci n2 (+ n1 n2))))
+	\end{verbatim}
+
+	
 	\subsection{Introduction to clojure.spec}
 	The newly introduced cloure.spec library is a contract system that allows Clojure developers to specify and validate expected data 
 	types at runtime. In addition to data validation, clojure.spec provides errors that are easy to parse. Each spec is just a 				 
