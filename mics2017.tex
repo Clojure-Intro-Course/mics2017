@@ -64,9 +64,9 @@
 \definecolor{Coquelicot}{RGB}{255, 56, 0}
 \definecolor{Teal}{RGB}{2,132,130}
 %Uncomment this if you want to show work-in-progress comments
-%\newcommand{\comment}[1]{{\bf \tt  {#1}}}
+\newcommand{\comment}[1]{{\bf \tt  {#1}}}
 % Uncomment this if you don't want to show comments
-\newcommand{\comment}[1]{}
+%\newcommand{\comment}[1]{}
 \newcommand{\emcomment}[1]{\textcolor{ForestGreen}{\comment{Elena: {#1}}}}
 \newcommand{\todo}[1]{\textcolor{blue}{\comment{To Do: {#1}}}}
 \newcommand{\tscomment}[1]{\textcolor{Teal}{\comment{Tony: {#1}}}}
@@ -148,39 +148,43 @@ TBD
 	This section is an introduction to Clojure and the clojure.spec library. 
 	\subsection{Clojure}
 	Unlike popular mainstream languages such as Java or C++, Clojure shares some distinct features with other LISP dialects. 
-	One is the use of parentheses in syntax. In Clojure, every instruction or expression is enclosed by parentheses. To invoke a 
+	\emcomment{This is an awkward sentence, rewrite? }
+	One is the use of parentheses in syntax. In Clojure, every instruction or expression is enclosed in parentheses. To invoke a 
 	function, you need to specify a function name right after the opening parenthesis and then list all arguments before the 
-	closing parenthesis. Parentheses are required even functions that do not take any arguments. This form of notation is 
+	closing parenthesis. Parentheses are required even for functions that do not take any arguments. This form of notation is 
 	called prefix-notation which is also a feature of Clojure. A simple addition of 3 and 4 in Clojure looks like: 
 	\begin{verbatim}
 	(+ 3 4)
 	\end{verbatim}
 	This syntax might look odd, but it is very powerful and easy to parse for machines since the system does not need to 
-	calculate operator precedence. 
+	calculate operator precedence. \emcomment{Mention that + is a function; the syntax is also convenient since it easily accommodates a variable number of arguments}
 
 	Another functional programming feature that Clojure adopted is immutable data structures. In Clojure, once you bind a 
 	name to a value, you cannot change the associated value. We call the name of the binding as symbol. To change the 
-	binding value, you need to re-define the constant with the same symbol which is essentially a different binding. This is 
+	binding value, you need to re-define the constant with the same symbol which is essentially a different binding. 
+	\emcomment{I would remove the previous two sentences: don't need this level of detail. }
+	This is 
 	the main source of confusion for developers from object oriented programming background since they are used to 
 	change values of a variable. One huge benefit of using immutable data types is minimizing side effects, which means 
 	developers do not need to worry about variables being modified from unanticipated places.
 
 	Among various data structures that Clojure supports, an abstract sequential data type called sequences is very unique in 
-	a way they behave; a sequence can be lazy. A sequence being lazy means the element(s) of them can potentially be realized even though they do not exist now. 
+	a way they behave; a sequence can be lazy. A sequence being lazy means that its element(s) can potentially be realized even though they do not exist now. 
+	\emcomment{This is very confusing! Unclear what "realize" means. }
 	In other words, a lazy sequence is like a set of rules that is able to generate elements according to them.
-	They just exist as a type until some functions force the lazy sequence to be evaluated. Because of its laziness, it is possible 
+	Such sequences just exist as a type until some functions force them to be evaluated. Because of its laziness, it is possible 
 	for a lazy sequence to represent an infinite value. The following is a function that returns a lazy sequence that stores the 
 	Fibonacci sequence when the starting values are n1 and n2. Theoretically, it can generate elements of the Fibonacci 
 	sequence infinitely. 
 	\begin{verbatim}
 	(defn fibonacci [n1 n2]
-		(lazy-seq (cons n1 (fibonacci n2 (+ n1 n2))))
+	   (lazy-seq (cons n1 (fibonacci n2 (+ n1 n2))))
 	\end{verbatim}
-
+	\emcomment{You need to introduce a bit of Clojure syntax for a function definition, you can't just jump to this.}
 	
 	\subsection{Introduction to clojure.spec}
 	The newly introduced cloure.spec library is a contract system that allows Clojure developers to specify and validate expected data 
-	types at runtime. In addition to data validation, clojure.spec provides errors that are easy to parse. Each spec is just a 				 
+	types \emcomment{I'd say, expected data, not (just) data types} at runtime. In addition to data validation, clojure.spec provides errors that are easy to parse. Each spec is just a 				 
 	specification for data, so any predicate functions can be used as spec predicates. \texttt{s/def} is used to define specs. Following are 
 	some simple spec definitions with Clojure predicates:
 	\begin{verbatim}
@@ -188,17 +192,24 @@ TBD
 	(s/def ::check-function ifn?)
 	\end{verbatim}
 	It is possible to assemble simple specs to create a more complicated spec. For instance, we can write a spec that verifies 
-	the argument types of a function by combining \texttt{::check-int} and \texttt{::check-function} with \texttt{s/cat}. 
+	the argument types of a function by combining \texttt{::check-int} and \texttt{::check-function} with \texttt{s/cat} 
+	which stands for concatenation. 
 	\begin{verbatim}
 	(s/def ::check-int-function 
 	(s/cat :first-arg ::check-int
     	:second-arg ::check-function))
 	\end{verbatim}
-	One really powerful feature of spec is the use of regular operators such as \texttt{s/cat}, \texttt{s/*}, and \texttt{s/?}. Using 
-	these regular operators, we can describe a variety of data structures, including lazy sequences and nested data. To define 
+	\emcomment{show what the above example validates: what data is valid? }
+	One really powerful feature of spec is the use of regular operators such as \texttt{s/cat}, \texttt{s/*}, and \texttt{s/?}. 
+	\emcomment{Mention what the other two stand for.}
+	Using 
+	these regular operators, we can describe a variety of data structures, including lazy sequences and nested data. 
+
+	To define 
 	input and output specifications for functions, clojure.spec uses \texttt{s/fdef}. Even though it is possible to define the output spec 
 	for a function, it is only usable in spec testing. For our purpose, we will be focused on the input verification. Let's take a 
 	look at an example of using \texttt{s/fdef}. Following are a simplified definition of \texttt{even?} function and a possible function spec for it. 
+	\emcomment{Move the two following sentences elsewhere (you can talk about instrumenting at the beginning or the end of the section)}
 	One thing to keep in mind is that you should turn on the spec to start checking data. Otherwise, the spec is completely 
 	ignored at runtime.
 	\begin{verbatim}
