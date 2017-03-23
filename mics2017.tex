@@ -224,7 +224,30 @@ TBD
 
 
 \section{Clojure error messages}
-TBD
+Since Clojure compiles to Java bytecodes and runs on the JVM, Clojure error messages are just Java exceptions
+and uses Java datatypes and terminology. 
+For instance, {\tt (+ 2 true)} is an attempt to add a number and a boolean. 
+Since Java does not automatically convert booleans to numbers, this code results in an error:
+\begin{verbatim}
+ClassCastException java.lang.Boolean cannot be cast 
+to java.lang.Number  
+clojure.lang.Numbers.add (Numbers.java:128)
+\end{verbatim} 
+This is quite cryptic for beginners since they are not familiar with a term ``class'' for a datatype,
+``casting'' for type conversion, and ``exception'' for an error. Moreover, even if a term ``boolean'' 
+has been introduced to them for true/false values, the prefix {\tt  java.lang} does not 
+correspond to their experience. Also, note that the class {\tt Number} has a prefix {\tt  clojure.lang}
+which is different from {\tt  java.lang} . To worsen the confusion, instead of referring
+to the function {\tt +}, the error message refers to the method {\tt add}, and the class 
+in which it is defined is {\tt clojure.lang.Numbers}. Those familiar with Java may identify this
+method as a static method (mostly based on the naming convention: {\tt Numbers} is pluralized). 
+For new Clojure programmers not familiar with Java, however, the message carries very little, if any, information. 
+Even if these new programmers memorize common error messages terminology after a while, 
+it would still not have any grounding in their experience. 
+
+Clearly, this situation is not acceptable in an introductory computer science class. Thus, one of the directions of our project is to 
+provide a set of error messages that would be more consistent and meaningful in the context of 
+novice programmers' experience. 
 
 \section{Improving error messages with clojure.spec}
 TBD
