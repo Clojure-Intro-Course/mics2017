@@ -187,7 +187,9 @@ TBD
 	developers do not need to worry about variables being modified from unanticipated operations.
 	\emcomment{variables are immutable by default; there are mutable variables, and they need to be explicitly declared as such - need to clarify this, 
 	otherwise our discussion of an atom doesn't make sense}
-
+	
+		
+	
 	Among various data structures that Clojure supports, sequences are unique in 
 	the way they behave. In particular, a sequence can be lazy. In a lazy sequence, element(s) do not exist now, but they 
 	can potentially be computed later if needed. 
@@ -202,8 +204,20 @@ TBD
 	(defn fibonacci [n1 n2]
 	   (lazy-seq (cons n1 (fibonacci n2 (+ n1 n2))))
 	\end{verbatim}
-	%\emcomment{You need to introduce a bit of Clojure syntax for a function definition, you can't just jump to this.}
-	%\tscomment{Resolved?}
+	
+	Another commonly used Clojure data structure is hash maps. It is essentially a collection of key - value pairs. 
+	It is very useful when representing data with relationships. Followings are an example of a hash map to 
+	represent course - course number pairs. The key and value are separated by a space, and each key - value pair is 
+	separated by a comma.
+	\begin{verbatim}
+	{:Algorithms "CSCI3501", :Data-Structures "CSCI2101"}
+	\end{verbatim}
+	In this example:
+	\begin{itemize}
+	\item The curly braces represent this is a hash map
+	\item {\tt :Algorithms} and {\tt :Data-Structures} are the keys.
+	\item {\tt "CSCI3501"} and {\tt "CSCI2101"} are the values.
+	\end{itemize}
 	
 	\subsection{Introduction to clojure.spec}
 	The newly introduced cloure.spec library is a contract system that allows Clojure developers to specify and validate expected data 
