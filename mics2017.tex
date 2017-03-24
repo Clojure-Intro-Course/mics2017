@@ -207,16 +207,16 @@ TBD
 	
 	Another commonly used Clojure data structure is hash maps. It is essentially a collection of key - value pairs. 
 	It is very useful when representing data with relationships. Followings are an example of a hash map to 
-	represent course - course number pairs. The key and value are separated by a space, and each key - value pair is 
+	represent course: course number is paired with a course name. The key and value are separated by a space, and each key/value pair is 
 	separated by a comma.
 	\begin{verbatim}
-	{:Algorithms "CSCI3501", :Data-Structures "CSCI2101"}
+	{:csci3501 "Algorithms", :csci2101 "Data Structures"}
 	\end{verbatim}
 	In this example:
 	\begin{itemize}
-	\item The curly braces represent this is a hash map
-	\item {\tt :Algorithms} and {\tt :Data-Structures} are the keys.
-	\item {\tt "CSCI3501"} and {\tt "CSCI2101"} are the values.
+	\item The curly braces represent that this is a hash map
+	\item {\tt :csci3501} and {\tt :csci2101} are the keys.
+	\item {\tt "Algorithms"} and {\tt  "Data Structures"} are the values.
 	\end{itemize}
 	
 	\subsection{Introduction to clojure.spec}
