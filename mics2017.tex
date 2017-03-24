@@ -268,22 +268,45 @@ and replace the wording so that it is more understandable to beginners.
 \item For rare cases that are not listed in the dictionary we have no choice but to report an error as it is. 
 \end{enumerate}
 For this paper we are focusing on the first case: providing an assertion to check the number and type of the
-arguments. 
+arguments. We discuss how we have been handling this situation in the past and how using clojure.spec 
+allows us to collect the same information as before (and sometimes more) in a way that is less error-prone. 
 
 \subsection{Assertions for common Clojure functions}
 The approach to providing assertions to check function arguments that we used prior to 
 incorporating clojure.spec was to write our own function with the same name as a standard one, 
 provide a precondition for it to check if the arguments are valid, and if they are, call 
 the function provided by core Clojure. Here is an example of this approach used for
-function {\tt +}:
+function {\tt +} that specifies that it can take any number of arguments, but all
+of these arguments must be numbers:
 \begin{verbatim}
 (defn + [& args]
    {:pre [(check-if-numbers? "+" args 1)]}
    (apply clojure.core/+ args))
 \end{verbatim} 
-\emcomment{walk through step-by-step}
+In this example:
+\begin{itemize}
+\item the name of the function is {\tt +}, 
+\item the {\tt [\& args]} is the arguments list. The {\tt \&} sign indicates that what follows is
+a list of arguments of arbitrary length. 
+\item The next line (with {\tt :pre} in curly braces) is the precondition, followed by a list
+(in square brackets) of conditions to check. 
+\item In this case there is only one condition to check. It is given by our own 
+function {\tt check-if-numbers?} 
+and passing to it {\tt args} (the arguments passed to {\tt +}, the name of the function we 
+are checking, which is "+", and the starting number of the arguments being checked 
+(in this case we are checking all of the arguments, so the starting number is {\tt 1}). 
+\item  If {\tt check-if-numbers?}  returns true, the body of the overwritten function {\tt +} 
+gets executed. If it return false, an assertion error is thrown by the precondition. 
+\item The last line {\tt  (apply clojure.core/+ args)} applies the {\tt +} function in 
+{\tt clojure.core} to the list of arguments. One can think of {\tt  clojure.core/+} as 
+a path to the function {\tt +} in the core package of Clojure. 
+\end{itemize}
 
-\emcomment{Mention challenges and limitations}
+\emcomment{walk through step-by-step with an example (correct data and incorrect data); 
+show what information gets recorded in an atom, show the resulting error message}
+
+\emcomment{Mention challenges and limitations - here or elsewhere? In conclusions? 
+This doesn't seem to be a good place}
 
 \section{Improving error messages with clojure.spec}
 TBD
