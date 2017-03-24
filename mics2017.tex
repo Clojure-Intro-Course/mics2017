@@ -224,6 +224,7 @@ TBD
 
 
 \section{Clojure error messages}
+\subsection{Overview of Clojure error messages and our approaches}
 Since Clojure compiles to Java bytecodes and runs on the JVM, Clojure error messages are just Java exceptions
 and uses Java datatypes and terminology. 
 For instance, {\tt (+ 2 true)} is an attempt to add a number and a boolean. 
@@ -247,7 +248,42 @@ it would still not have any grounding in their experience.
 
 Clearly, this situation is not acceptable in an introductory computer science class. Thus, one of the directions of our project is to 
 provide a set of error messages that would be more consistent and meaningful in the context of 
-novice programmers' experience. 
+novice programmers experience. 
+
+Our error messages translate standard Clojure error messages into terms that are less confusing for beginners. 
+For example, the above-mentioned expression  {\tt (+ 2 true)} would result in the error message
+\begin{verbatim}
+In function "+" the second argument "true" must be a number, 
+but is a boolean. 
+\end{verbatim} 
+In this error message it is clear what function is being called, which argument is causing a problem, 
+what is expected, and what is given. 
+
+Our approach to replacing standard error messages has two main cases and a default case:
+\begin{enumerate}
+\item For commonly used functions we provide a direct assertion to check if we are passing the right number and types 
+of parameters, and report an error if we do not. These errors are more informative than default errors.
+\item For other cases we perform a lookup of an error message in our ``dictionary'' using pattern-matching, 
+and replace the wording so that it is more understandable to beginners. 
+\item For rare cases that are not listed in the dictionary we have no choice but to report an error as it is. 
+\end{enumerate}
+For this paper we are focusing on the first case: providing an assertion to check the number and type of the
+arguments. 
+
+\subsection{Assertions for common Clojure functions}
+The approach to providing assertions to check function arguments that we used prior to 
+incorporating clojure.spec was to write our own function with the same name as a standard one, 
+provide a precondition for it to check if the arguments are valid, and if they are, call 
+the function provided by core Clojure. Here is an example of this approach used for
+function {\tt +}:
+\begin{verbatim}
+(defn + [& args]
+   {:pre [(check-if-numbers? "+" args 1)]}
+   (apply clojure.core/+ args))
+\end{verbatim} 
+\emcomment{walk through step-by-step}
+
+\emcomment{Mention challenges and limitations}
 
 \section{Improving error messages with clojure.spec}
 TBD
@@ -255,16 +291,9 @@ TBD
 \section{Conclusions and future work}
 	\subsection{Conclusions}
 	\subsection{Future work}
+\emcomment{Figure out what to do with transducers}
 	
 \bibliographystyle{acm}
 \bibliography{mics2017}
 
-% \section{References?}\label{sec:reference}
-% \escomment{unsure if we actually put references directly into the
-%   paper or not...}
-% \emcomment{Emma - Don't worry about it for now. Do you have a reference you
-%   would like to add?}
-% \escomment{I have a few links to websites I used, but I'm not sure what format I should use for preparing them properly}
-
-% That's all folks!
 \end{document}
