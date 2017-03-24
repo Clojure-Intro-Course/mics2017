@@ -148,7 +148,6 @@ TBD
 	This section is an introduction to Clojure and the clojure.spec library. 
 	\subsection{Clojure}
 	A Lisp-dialect Clojure has some distinct features in comparison to other popular languages such as Java or Python.
-	%\emcomment{This is an awkward sentence, rewrite? } \tscomment{Resolved?}
 	One is the use of parentheses in syntax. In Clojure, every instruction or expression is enclosed in parentheses. To invoke a 
 	function, you need to specify a function name right after the opening parenthesis and then list all arguments before the 
 	closing parenthesis. Parentheses are required even for functions that do not take any arguments. This form of notation is 
@@ -170,9 +169,7 @@ TBD
 	\end{verbatim}
 
 	Another functional programming feature that Clojure adopted is immutable data structures. In Clojure, once you bind a 
-	name to a value, you cannot change the associated value.  
-	%\emcomment{I would remove the previous two sentences: don't need this level of detail. }
-	%\tscomment{Resolved?}
+	name to a value, you cannot change the associated value. 
 	This is the main source of confusion for developers from object oriented programming background since they are used to 
 	change values of a variable. One huge benefit of using immutable data types is minimizing side effects, which means 
 	developers do not need to worry about variables being modified from unanticipated places.
@@ -368,49 +365,80 @@ between the global variable and the error being handled.
 \emcomment{Mention challenges and limitations - here or elsewhere? In conclusions? 
 This doesn't seem to be a good place}
 
+\tscomment{Spec-specific issues (inline-functions) will be explained in 'Approaches to improve error messages'. I think 
+just mentioning why checking lazy sequences is hard (we need to evaluate some for checking) is sufficient?}
+
 \section{Improving error messages with clojure.spec}
 	\subsection{Benefits of using clojure.spec}
-	If a non-spec function \emcomment{unclear what you mean by non-spec function} fails, 
-	it throws an error having the information about the type of error, error message, and stack 
-	trace. The failing value is rarely given in the error. \emcomment{Give a short example of what you mean by a failing value}
-	  Even when it is given, you still need to parse the specific value out of 
+	If a function, which a spec is not attached, \emcomment{unclear what you mean by non-spec function} fails,
+	\tscomment{Resolved?} 
+	it throws an error which has the information about the type of error, error message, and stack 
+	trace. The value that caused the error is rarely given in the error. 
+	\emcomment{Give a short example of what you mean by a failing value}\tscomment{Resolved?}
+	Let's say a user tried to add {\tt 3} to {\tt true}. Because addition only works for number, 
+	{\tt true} of type boolean is the value that caused the error or the 'failing value' in this case.
+	Even when the failing value is given, we still need to parse the specific value out of 
 	the error message string. The same problem occurs when it comes to the line number indicating where it failed. 
 	Because an accurate line number is not given in the error message, users need to go through the stack trace to find 
 	where the error actually happened. 
 
-	On the other hand, if a function with a spec fails, an exception object {\tt 
-	clojure.lang.ExceptionInfo} is thrown. This exception object has a hash map of failure information, which can easily be 
+	On the other hand, if a spec-attached function fails, an exception object {\tt clojure.lang.ExceptionInfo} is thrown. 
+	This exception object has a hash map of failure information, which can easily be 
 	parsed with Clojure {\tt ex-data} function. \emcomment{did we explain what a hashmap is?}
+	
+	\tscomment{Should be explained in Background}
 
 	One prerequisite to provide user-friendly error messages is having enough information about the function failure. Since 
 	default Clojure error does not provide sufficient data such as the name of failing function or the failing value, our 
-	research group had to use some sort of global state to store extra information. With clojure.spec, we no longer need a 
-	global variable because the hash map of {\tt clojure.lang.ExeptoinInfo} object has much more information about the 
-	failure compared to the default Clojure error. The information that the hash map provides contains which predicate it 
+	research group had to use some sort of global state to store extra information as we explained in Section 3.2. 
+	With clojure.spec, we no longer need a global variable because the hash map of {\tt clojure.lang.ExeptoinInfo} object 
+	has much more information about the 
+	failure compared to the default Clojure error. The information that the embedded hash map provides contains which predicate it 
 	failed, which the failing value was, and where the value was in the argument sequence if the function takes multiple 
-	arguments. In addition, they can be easily parsed as we explained earlier.
+	arguments. In addition, they can be easily parsed as explained earlier.
 	
 	\subsection{Approaches to improve error messages}
 	With clojure.spec, we have used two different approaches to improve error messages. One way is using a function spec. 
-	If we write function specs that are attached to the Clojure core functions, the spec error is thrown when some function 
-	call fails. Then, we can parse the spec error and process it before we show them to the user. For instance, min function 
-	takes one or more numbers, and returns the least number. We can verify the input of the min function by providing a 
+	If function specs are attached to the Clojure core functions, the spec error is thrown when some core function 
+	call fails. Then, we can simply parse necessary information from the hash map embedded in the spec error, and 
+	process it before we show them to the user. For instance, {\tt min} function 
+	takes one or more numbers, and returns the least number. We can verify the input of the {\tt min} function by providing a 
 	function spec like following:
 
 	\begin{verbatim}
 	(s/fdef clojure.core/min
-	:args (s/cat :check-numbers (s/+ number?)))
+		:args (s/cat :check-numbers (s/+ number?)))
 	\end{verbatim}
 
-	The main advantage of using a function spec is that we do not need to overwrite core functions. We attach our 
-	function specs to the Clojure core functions and simply turn on the spec checking. It is also very flexible because we 
-	can turn on and off the spec checking. We eventually decided to use the second approach, using spec assert, after we 
-	discovered some issues with the function spec. Function specs do not work for inline functions. Many of Clojure core 
-	arithmetic functions are inline functions for better performance. Beginners often use arithmetic functions, including +, -, 
-	or *, so not using specs for them is a huge downside. Also, function specs seem to have some problems dealing with 
-	lazy sequences. 
+	The main advantage of using a function spec is that we do not need to overwrite Clojure core functions. We can simply attach our 
+	function specs to the Clojure core functions. It is also very flexible in that it can be turned off if necessary. 
+	We eventually decided to use another approach, using spec assert, after we 
+	discovered some issues with the function spec. One serious issue is that function specs do not work for inline functions. 
+	Many of Clojure core arithmetic functions are inline functions for better performance. 
+	Beginners often use arithmetic functions, including {\tt +}, {\tt -}, and {\tt *}, 
+	so not being able to use specs for them is a huge downside of the function spec. 
+	Also, function specs seem to have some problems dealing with lazy sequences. 
 
-	\todo{s/spec overwrites Clojure functions. But they seem promising (no inline or lazy-seq issue)}
+	Because of the issues mentioned above, our research team is currently using {\tt s/assert} in lieu of the function spec.
+	This approach is very similar to our pre-spec approach that uses {\tt :pre} and requires overwriting 
+	Clojure core functions. However, we can solve the issues concerning to inline functions in that 
+	the spec checks the overwritten function's input before the call to the core function is made. 
+	
+	Following is the overwritten {\tt min} with spec assert. The function {\tt do} just evaluates
+	the expressions in order, which means the s/assert is checked prior to the function call to {\tt clojure.core/min}.
+	
+	\begin{verbatim}
+	(defn min [arg1 & args]
+  		(do 
+    		(s/assert (s/cat :check-numbers (s/+ number?)) [arg1 args])
+    		(apply clojure.core/min arg1 args)))
+	\end{verbatim} 
+	
+	\todo{This also solves lazy-seq issue}
+	
+	
+	
+	
 
 \section{Conclusions and future work}
 	\subsection{Conclusions}
