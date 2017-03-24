@@ -157,35 +157,42 @@ TBD
 	\end{verbatim}
 	In Clojure, even \texttt{+} is a just function, not a special operator. This syntax might look odd, but it is very efficient and easy to parse for machines since the system does not need to 
 	calculate operator precedence. Moreover, it easily accommodates a variable number of arguments like {\tt (+ 3 4 5 6)}.
-% \emcomment{Mention that + is a function; the syntax is also convenient since it easily accommodates a variable number of %arguments} \tscomment{Resolved?}
 	\emcomment{Give an example of a variable number of args}\tscomment{Resolved?}
+	\emcomment{Need to explain in words what that means}
 	
 	Defining a function is very intuitive in Clojure. Inside a pair of parentheses, you list \texttt{defn}, the function name, 
 	the argument list, and the expression. 
-	\emcomment{Need to explain what each of these elements is, explain the meaning of the function below, and point to all of its elements}
-	\tscomment{Resolved?}
+	%\emcomment{Need to explain what each of these elements is, explain the meaning of the function below, and point to all of its elements}
+	%\tscomment{Resolved?}
 	An example of a function that multiplies a given number by two looks like:
 	 \begin{verbatim}
-	(defn multiply-two [n] (* n 2))
+	(defn multiply-by-two [n] (* n 2))
 	\end{verbatim}
 	In this example:
 	\begin{itemize}
 	\item {\tt defn} indicates the declaration of a function.
-	\item {\tt multiply-2} is the function name.
-	\item \texttt{[n]} is the argument list.
-	\item {\tt (* n 2)} is the expression that multiplies n by 2.
+	\item {\tt multiply-by-two} is the function name.
+	\item \texttt{[n]} is the argument list: there is only one argument named {\tt n}.
+	\item {\tt (* n 2)} is the expression that multiplies n by 2. The result of this expression will be returned from the function. 
 	\end{itemize}
+	\emcomment{show the function call and its result. }
 	
-	Another functional programming feature that Clojure adopted is immutable data structures. In Clojure, once you bind a 
-	name to a value, you cannot change the associated value. 
+	Another functional programming feature that Clojure adopted is immutable variables. In Clojure, once you bind a 
+	name to a value, you cannot change the associated value. \emcomment{It's not just that you can't change the value, you cannot change
+	what the variable is bound to. }
 	This is the main source of confusion for developers from imperative programming backgrounds since they are used to 
-	changing values of a variable. One huge benefit of using immutable data types is minimizing side effects, which means 
+	changing values of a variable.
+	\emcomment{immutable variables and data structures are actually slightly different, need to elaborate on this} 
+	One huge benefit of using immutable data types is minimizing side effects, which means 
 	developers do not need to worry about variables being modified from unanticipated operations.
+	\emcomment{variables are immutable by default; there are mutable variables, and they need to be explicitly declared as such - need to clarify this, 
+	otherwise our discussion of an atom doesn't make sense}
 
 	Among various data structures that Clojure supports, sequences are unique in 
-	the way they behave, in particular, a sequence can be lazy. In a lazy sequence, element(s) do not exist now, but they 
+	the way they behave. In particular, a sequence can be lazy. In a lazy sequence, element(s) do not exist now, but they 
 	can potentially be computed later if needed. 
-	\emcomment{This is very confusing! Unclear what "realize" means. } \tscomment{Resolved?}
+	\emcomment{will be computed later as needed? }
+	%\emcomment{This is very confusing! Unclear what "realize" means. } \tscomment{Resolved?}
 	In other words, lazy sequences are like a set of rules capable of generating as many elements as are needed.
 	Such sequences just exist as a lazy sequence type until some functions force them to be evaluated. Because of its laziness, it is possible 
 	for a lazy sequence to represent an infinite sequence. The following is a function that returns a lazy sequence representing the 
@@ -200,13 +207,18 @@ TBD
 	
 	\subsection{Introduction to clojure.spec}
 	The newly introduced cloure.spec library is a contract system that allows Clojure developers to specify and validate expected data 
-	\emcomment{I'd say, expected data, not (just) data types}\tscomment{Resolved?} at runtime. In addition to data validation, clojure.spec provides errors that are easy to parse. Each spec is just a 				 
-	specification for data, so any predicate functions can be used as spec predicates. \texttt{s/def} is used to define specs. Following are 
+	%\emcomment{I'd say, expected data, not (just) data types}\tscomment{Resolved?} 
+	at runtime. In addition to data validation, clojure.spec provides easy-to-parse error messages when data is invalid. Each spec is just a 				 
+	specification for data, so any predicate functions can be used as spec predicates. 
+	\emcomment{I am not sure what the previous sentence means}
+
+	\texttt{s/def} is used to define specs. Following are 
 	some simple spec definitions with Clojure predicates:
 	\begin{verbatim}
 	(s/def ::check-int integer?)
 	(s/def ::check-function ifn?)
 	\end{verbatim}
+	\emcomment{show how these are used to validate data (before you talk about more complicated specs)}
 	It is possible to assemble simple specs to create a more complicated spec. For instance, we can write a spec that verifies 
 	the argument types of a function by combining \texttt{::check-int} and \texttt{::check-function} with \texttt{s/cat} 
 	which stands for concatenation. 
@@ -215,9 +227,11 @@ TBD
 		(s/cat :first-arg ::check-int 
 		          :second-arg ::check-function))
 	\end{verbatim}
-	If the above spec is attached to a function that takes two arguments, (function-name 4 odd?) will be valid because 
-	the first argument 4 is an integer and the second argument odd? is a function.
-	\emcomment{show what the above example validates: what data is valid? }\tscomment{Resolved?}
+	If the above spec is attached to a function that takes two arguments, {\tt (function-name 4 odd?)} will be valid because 
+	the first argument 4 is an integer and the second argument {\tt odd?} is a function.
+	\emcomment{The question mark in the name is confusing. Perhaps show an example with just odd? first, go over what it is. 
+	Also use some actual name, like myfunction, rather than function-name}
+	%\emcomment{show what the above example validates: what data is valid? }\tscomment{Resolved?}
 	
 	One really powerful feature of spec is the use of regular operators such as \texttt{s/cat}, \texttt{s/*}, and \texttt{s/?}. 
 	\emcomment{Mention what the other two stand for.}\tscomment{Resolved?}
@@ -230,8 +244,8 @@ TBD
 	Otherwise, the spec is completely ignored at runtime. Let's take a look at an example of using \texttt{s/fdef}. Following 
 	are a simplified definition of \texttt{even?} function and a possible function spec for it. Whenever \texttt{even?} function
 	is called, the spec is invoked and checks if the argument is an integer.
-	\emcomment{Move the two following sentences elsewhere (you can talk about instrumenting at the beginning or the end of the section)} 
-	\tscomment{I just moved it to the top of the paragraph. I feel like it still belongs to this paragraph.}
+	%\emcomment{Move the two following sentences elsewhere (you can talk about instrumenting at the beginning or the end of the section)} 
+	%\tscomment{I just moved it to the top of the paragraph. I feel like it still belongs to this paragraph.}
 	
 	\begin{verbatim}
 	(defn even? [n] (= (mod n 2) 0))
