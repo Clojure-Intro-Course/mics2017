@@ -156,16 +156,17 @@ TBD
 	(+ 3 4)
 	\end{verbatim}
 	In Clojure, even \texttt{+} is a just function, not a special operator. This syntax might look odd, but it is very efficient and easy to parse for machines since the system does not need to 
-	calculate operator precedence. Moreover, it easily accommodates a variable number of arguments like {\tt (+ 3 4 5 6)}.
+	calculate operator precedence. Moreover, it easily accommodates a variable number of arguments, which means
+	you can provide any number of arguments to the {\tt +} function like {\tt (+ 3 4 5 6)}
+	or {\tt (+ 3 4 5 6 10 15)}.
 	\emcomment{Give an example of a variable number of args}\tscomment{Resolved?}
 	\emcomment{Need to explain in words what that means}
+	\tscomment{Resolved I think}
 	
 	Defining a function is very intuitive in Clojure. Inside a pair of parentheses, you list \texttt{defn}, the function name, 
-	the argument list, and the expression. 
-	%\emcomment{Need to explain what each of these elements is, explain the meaning of the function below, and point to all of its elements}
-	%\tscomment{Resolved?}
+	the argument list, and the expression.
 	An example of a function that multiplies a given number by two looks like:
-	 \begin{verbatim}
+	\begin{verbatim}
 	(defn multiply-by-two [n] (* n 2))
 	\end{verbatim}
 	In this example:
@@ -175,26 +176,36 @@ TBD
 	\item \texttt{[n]} is the argument list: there is only one argument named {\tt n}.
 	\item {\tt (* n 2)} is the expression that multiplies n by 2. The result of this expression will be returned from the function. 
 	\end{itemize}
+	The following are the function call and its result. {\tt =>} is just a notation that we are using to show 
+	what the function returns.
+	 \begin{verbatim}
+	(multiply-by-two 3)
+	=> 6
+	\end{verbatim}
 	\emcomment{show the function call and its result. }
+	\tscomment{Resolved?}
 	
 	Another functional programming feature that Clojure adopted is immutable variables. In Clojure, once you bind a 
-	name to a value, you cannot change the associated value. \emcomment{It's not just that you can't change the value, you cannot change
+	name to a value, you cannot what the name is bound to. \emcomment{It's not just that you can't change the value, you cannot change
 	what the variable is bound to. }
+	\tscomment{Resolved?}
 	This is the main source of confusion for developers from imperative programming backgrounds since they are used to 
-	changing values of a variable.
-	\emcomment{immutable variables and data structures are actually slightly different, need to elaborate on this} 
-	One huge benefit of using immutable data types is minimizing side effects, which means 
-	developers do not need to worry about variables being modified from unanticipated operations.
+	changing variables to store different values.
+	\emcomment{immutable variables and data structures are actually slightly different, need to elaborate on this}
+	\tscomment{Changed wording}
+	One huge benefit of using immutable variables is minimizing side effects, which means 
+	developers do not need to worry about variables being modified from unanticipated operations. 
+	There are mutable variables in Clojure, but they need to be explicitly declared and modified with special syntax.
+	Thus, side effects are not a serious concern as in imperative programming languages. 
 	\emcomment{variables are immutable by default; there are mutable variables, and they need to be explicitly declared as such - need to clarify this, 
 	otherwise our discussion of an atom doesn't make sense}
-	
-		
+	\tscomment{resolved}	
 	
 	Among various data structures that Clojure supports, sequences are unique in 
 	the way they behave. In particular, a sequence can be lazy. In a lazy sequence, element(s) do not exist now, but they 
-	can potentially be computed later if needed. 
+	can potentially be computed later as needed. 
 	\emcomment{will be computed later as needed? }
-	%\emcomment{This is very confusing! Unclear what "realize" means. } \tscomment{Resolved?}
+	\tscomment{Resolved?}
 	In other words, lazy sequences are like a set of rules capable of generating as many elements as are needed.
 	Such sequences just exist as a lazy sequence type until some functions force them to be evaluated. Because of its laziness, it is possible 
 	for a lazy sequence to represent an infinite sequence. The following is a function that returns a lazy sequence representing the 
@@ -214,7 +225,7 @@ TBD
 	\end{verbatim}
 	In this example:
 	\begin{itemize}
-	\item The curly braces represent this is a hash map
+	\item The curly braces represent this is a hash map.
 	\item {\tt :Algorithms} and {\tt :Data-Structures} are the keys.
 	\item {\tt "CSCI3501"} and {\tt "CSCI2101"} are the values.
 	\end{itemize}
