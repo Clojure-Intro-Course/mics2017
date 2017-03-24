@@ -157,11 +157,11 @@ TBD
 	\end{verbatim}
 	In Clojure, even \texttt{+} is a just function, not a special operator. This syntax might look odd, but it is very efficient and easy to parse for machines since the system does not need to 
 	calculate operator precedence. Moreover, it easily accommodates a variable number of arguments, which means
-	you can provide any number of arguments to the {\tt +} function like {\tt (+ 3 4 5 6)}
-	or {\tt (+ 3 4 5 6 10 15)}.
-	\emcomment{Give an example of a variable number of args}\tscomment{Resolved?}
-	\emcomment{Need to explain in words what that means}
-	\tscomment{Resolved I think}
+	you can provide any number of arguments to some functions, such as the {\tt +} function. For instance,  both {\tt (+ 3 4 5 6)}
+	or {\tt (+ 3 4 5 6 10 15)} work.
+	%\emcomment{Give an example of a variable number of args}\tscomment{Resolved?}
+	%\emcomment{Need to explain in words what that means}
+	%\tscomment{Resolved I think}
 	
 	Defining a function is very intuitive in Clojure. Inside a pair of parentheses, you list \texttt{defn}, the function name, 
 	the argument list, and the expression.
@@ -176,40 +176,41 @@ TBD
 	\item \texttt{[n]} is the argument list: there is only one argument named {\tt n}.
 	\item {\tt (* n 2)} is the expression that multiplies n by 2. The result of this expression will be returned from the function. 
 	\end{itemize}
-	The following are the function call and its result. {\tt =>} is just a notation that we are using to show 
-	what the function returns.
-	 \begin{verbatim}
-	(multiply-by-two 3)
-	=> 6
-	\end{verbatim}
-	\emcomment{show the function call and its result. }
-	\tscomment{Resolved?}
+	Calling this function with an argument 3 would look like this {\tt (multiply-by-two 3)} and returns 6.
+%	The following are the function call and its result. {\tt =>} is just a notation that we are using to show 
+%	what the function returns.
+%	 \begin{verbatim}
+%	(multiply-by-two 3)
+%	=> 6
+%	\end{verbatim}
+%	\emcomment{show the function call and its result. }
+%	\tscomment{Resolved?}
 	
 	Another functional programming feature that Clojure adopted is immutable variables. In Clojure, once you bind a 
-	name to a value, you cannot what the name is bound to. \emcomment{It's not just that you can't change the value, you cannot change
-	what the variable is bound to. }
-	\tscomment{Resolved?}
+	name to a value, you cannot change what the name is bound to.
+%	 \emcomment{It's not just that you can't change the value, you cannot change what the variable is bound to. }
+%	\tscomment{Resolved?}
 	This is the main source of confusion for developers from imperative programming backgrounds since they are used to 
 	changing variables to store different values.
-	\emcomment{immutable variables and data structures are actually slightly different, need to elaborate on this}
-	\tscomment{Changed wording}
-	One huge benefit of using immutable variables is minimizing side effects, which means 
+	%\emcomment{immutable variables and data structures are actually slightly different, need to elaborate on this}
+	%\tscomment{Changed wording}
+	The main benefit of using immutable variables is minimizing side effects, which means 
 	developers do not need to worry about variables being modified from unanticipated operations. 
 	There are mutable variables in Clojure, but they need to be explicitly declared and modified with special syntax.
-	Thus, side effects are not a serious concern as in imperative programming languages. 
-	\emcomment{variables are immutable by default; there are mutable variables, and they need to be explicitly declared as such - need to clarify this, 
-	otherwise our discussion of an atom doesn't make sense}
-	\tscomment{resolved}	
+	Thus, side effects are not as serious concern as in imperative programming languages. 
+%	\emcomment{variables are immutable by default; there are mutable variables, and they need to be explicitly declared as such - need to clarify this, 
+%	otherwise our discussion of an atom doesn't make sense}
+%	\tscomment{resolved}	
 	
 	Among various data structures that Clojure supports, sequences are unique in 
 	the way they behave. In particular, a sequence can be lazy. In a lazy sequence, element(s) do not exist now, but they 
-	can potentially be computed later as needed. 
-	\emcomment{will be computed later as needed? }
-	\tscomment{Resolved?}
+	can potentially be computed later when they are needed. 
+%	\emcomment{will be computed later as needed? }
+%	\tscomment{Resolved?}
 	In other words, lazy sequences are like a set of rules capable of generating as many elements as are needed.
 	Such sequences just exist as a lazy sequence type until some functions force them to be evaluated. Because of its laziness, it is possible 
 	for a lazy sequence to represent an infinite sequence. The following is a function that returns a lazy sequence representing the 
-	Fibonacci sequence. In this case, the starting values are n1 and n2. Theoretically, it could generate elements of the Fibonacci 
+	Fibonacci sequence. In this case, the starting values are {\tt  n1} and {\tt n2}. Theoretically, it could generate elements of the Fibonacci 
 	sequence indefinitely. 
 	\begin{verbatim}
 	(defn fibonacci [n1 n2]
@@ -218,16 +219,17 @@ TBD
 	
 	Another commonly used Clojure data structure is hash maps. It is essentially a collection of key - value pairs. 
 	It is very useful when representing data with relationships. Followings are an example of a hash map to 
-	represent course - course number pairs. The key and value are separated by a space, and each key - value pair is 
+	represent a college course: course number is paired with a course name. 
+	The key and value are separated by a space, and each key - value pair is 
 	separated by a comma.
 	\begin{verbatim}
-	{:Algorithms "CSCI3501", :Data-Structures "CSCI2101"}
+	{:csci3501 "Algorithms", :csci2101 "Data Structures"}
 	\end{verbatim}
 	In this example:
 	\begin{itemize}
-	\item The curly braces represent this is a hash map.
-	\item {\tt :Algorithms} and {\tt :Data-Structures} are the keys.
-	\item {\tt "CSCI3501"} and {\tt "CSCI2101"} are the values.
+	\item The curly braces represent that this is a hash map
+	\item {\tt :csci3501} and {\tt :csci2101} are the keys.
+	\item {\tt "Algorithms"} and {\tt  "Data Structures"} are the values.
 	\end{itemize}
 	
 	\subsection{Introduction to clojure.spec}
