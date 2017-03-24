@@ -310,13 +310,17 @@ This doesn't seem to be a good place}
 
 \section{Improving error messages with clojure.spec}
 	\subsection{Benefits of using clojure.spec}
-	If a non-spec function fails, it throws an error having the information about the type of error, error message, and stack 
-	trace. The failing value is rarely given in the error. Even when it is given, you still need to parse the specific value out of 
+	If a non-spec function \emcomment{unclear what you mean by non-spec function} fails, 
+	it throws an error having the information about the type of error, error message, and stack 
+	trace. The failing value is rarely given in the error. \emcomment{Give a short example of what you mean by a failing value}
+	  Even when it is given, you still need to parse the specific value out of 
 	the error message string. The same problem occurs when it comes to the line number indicating where it failed. 
 	Because an accurate line number is not given in the error message, users need to go through the stack trace to find 
-	where the error actually happened. On the other hand, if a function with a spec fails, an exception object {\tt 
+	where the error actually happened. 
+
+	On the other hand, if a function with a spec fails, an exception object {\tt 
 	clojure.lang.ExceptionInfo} is thrown. This exception object has a hash map of failure information, which can easily be 
-	parsed with Clojure {\tt ex-data} function. 
+	parsed with Clojure {\tt ex-data} function. \emcomment{did we explain what a hashmap is?}
 
 	One prerequisite to provide user-friendly error messages is having enough information about the function failure. Since 
 	default Clojure error does not provide sufficient data such as the name of failing function or the failing value, our 
