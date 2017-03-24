@@ -147,8 +147,8 @@ TBD
 \section{Background}
 	This section is an introduction to Clojure and the clojure.spec library. 
 	\subsection{Clojure}
-	A LISP-dialect Clojure has some distinct features in comparison to other popular languages such as Java or Python.
-	\emcomment{This is an awkward sentence, rewrite? } \tscomment{Resolved?}
+	A Lisp-dialect Clojure has some distinct features in comparison to other popular languages such as Java or Python.
+	%\emcomment{This is an awkward sentence, rewrite? } \tscomment{Resolved?}
 	One is the use of parentheses in syntax. In Clojure, every instruction or expression is enclosed in parentheses. To invoke a 
 	function, you need to specify a function name right after the opening parenthesis and then list all arguments before the 
 	closing parenthesis. Parentheses are required even for functions that do not take any arguments. This form of notation is 
@@ -156,19 +156,23 @@ TBD
 	\begin{verbatim}
 	(+ 3 4)
 	\end{verbatim}
-	In Clojure, \texttt{+} is a just function not a special operator. This syntax might look odd, but it is very powerful and easy to parse for machines since the system does not need to 
-	calculate operator precedence. Also, it easily accommodates a variable number of arguments. \emcomment{Mention that + is a function; the syntax is also convenient since it easily accommodates a variable number of arguments} \tscomment{Resolved?}
+	In Clojure, \texttt{+} is a just function, not a special operator. This syntax might look odd, but it is very powerful and easy to parse for machines since the system does not need to 
+	calculate operator precedence. Also, it easily accommodates a variable number of arguments.
+% \emcomment{Mention that + is a function; the syntax is also convenient since it easily accommodates a variable number of %arguments} \tscomment{Resolved?}
+	\emcomment{Give an example of a variable number of args}
 	
 	Defining a function is very intuitive in Clojure. Inside a pair of parentheses, you list \texttt{defn} macro, \texttt{[args]}, 
-	and the expression in order. An example of a function that multiplies the given number by two looks like:
+	and the expression in order. \emcomment{Need to explain what each of these elements is, 
+	explain the meaning of the function below, and point to all of its elements}
+	An example of a function that multiplies the given number by two looks like:
 	 \begin{verbatim}
 	(defn multiply-2 [n] (* n 2))
 	\end{verbatim}
 
 	Another functional programming feature that Clojure adopted is immutable data structures. In Clojure, once you bind a 
 	name to a value, you cannot change the associated value.  
-	\emcomment{I would remove the previous two sentences: don't need this level of detail. }
-	\tscomment{Resolved?}
+	%\emcomment{I would remove the previous two sentences: don't need this level of detail. }
+	%\tscomment{Resolved?}
 	This is the main source of confusion for developers from object oriented programming background since they are used to 
 	change values of a variable. One huge benefit of using immutable data types is minimizing side effects, which means 
 	developers do not need to worry about variables being modified from unanticipated places.
@@ -186,8 +190,8 @@ TBD
 	(defn fibonacci [n1 n2]
 	   (lazy-seq (cons n1 (fibonacci n2 (+ n1 n2))))
 	\end{verbatim}
-	\emcomment{You need to introduce a bit of Clojure syntax for a function definition, you can't just jump to this.}
-	\tscomment{Resolved?}
+	%\emcomment{You need to introduce a bit of Clojure syntax for a function definition, you can't just jump to this.}
+	%\tscomment{Resolved?}
 	
 	\subsection{Introduction to clojure.spec}
 	The newly introduced cloure.spec library is a contract system that allows Clojure developers to specify and validate expected data 
@@ -313,9 +317,53 @@ gets executed. If it return false, an assertion error is thrown by the precondit
 {\tt clojure.core} to the list of arguments. One can think of {\tt  clojure.core/+} as 
 a path to the function {\tt +} in the core package of Clojure. 
 \end{itemize}
+Clojure preconditions don't record enough information to generate a helpful error message. 
+In particular, they don't record the name of the function they are attached to or the argument 
+number. Thus our custom-made predicates, such as  {\tt check-if-numbers?}, record all 
+necessary information about failing arguments to augment the preconditions. 
 
-\emcomment{walk through step-by-step with an example (correct data and incorrect data); 
-show what information gets recorded in an atom, show the resulting error message}
+Before spec there was no good way of packaging necessary information into a failed assertion 
+exception itself, so we used a global variable (known as an {\it atom} in Clojure) to store this
+information. The stored information included:
+\begin{itemize}
+\item The type that the predicate is checking for, such as a number in the case shown above,
+\item The actual type of the argument,
+\item The value of the argument,
+\item The name of the function for which the assertion fails,
+\item The number of the argument, such as first, second, etc. 
+\end{itemize}
+\emcomment{fix formatting!}
+Going back to the example above, if we make a call {\tt (+ 2 true)}, the predicate 
+{\tt check-if-numbers?} will be called with the function name {\tt "+"}, arguments list
+{\tt (2, true)}, and the starting number of an argument: 1.   
+The predicate then checks the first argument in the list, {\tt 2}, and it is indeed a number. 
+Then a recursive call is made with the second argument, {\tt true}. The argument number is 
+incremented by 1 to indicate that it is a second argument. Since {\tt true} is not a number,
+failure information is recorded in the global variable: the function name is {\tt +}, the ``offending
+value'' is {\tt true} and its type is {\tt boolean}, the expected type is {\tt number}, and the argument 
+number is {\tt 2}. 
+
+After the information is recorded, the predicate returns {\tt false} to indicate that the precondition 
+has failed. Because the precondition failed, an exception {\tt AssertionError} is thrown to the 
+place of the program that has made the call to {\tt +} with a wrong argument. 
+The exception is then caught. Based on  its type {\tt AssertionError}, it is passed to a handling function 
+that retrieves the information from the global variable and forms the error message:
+\begin{verbatim}
+In function "+" the second argument "true" must be a number, 
+but is a boolean. 
+\end{verbatim} 
+The global variable is then ``cleared'', i.e. the information is deleted from it. This is done so that this 
+information is not accidentally retrieved later when it would become irrelevant and confusing. 
+
+While this approach produces a correct error message, it has drawbacks: using a global variable to
+pass this information from one part of the problem to another may be problematic in a multithreaded 
+program. This process would also be fragile if multiple errors are taking place in a cascading fashion,
+i.e. handling one error triggers another. The switch to clojure.spec eliminates potential inconsistencies 
+between the global variable and the error being handled. 
+
+\subsection{Lazy sequences and challenges in argument printing}
+
+
 
 \emcomment{Mention challenges and limitations - here or elsewhere? In conclusions? 
 This doesn't seem to be a good place}
