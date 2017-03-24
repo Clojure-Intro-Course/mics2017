@@ -309,7 +309,44 @@ show what information gets recorded in an atom, show the resulting error message
 This doesn't seem to be a good place}
 
 \section{Improving error messages with clojure.spec}
-TBD
+	\subsection{Benefits of using clojure.spec}
+	If a non-spec function fails, it throws an error having the information about the type of error, error message, and stack 
+	trace. The failing value is rarely given in the error. Even when it is given, you still need to parse the specific value out of 
+	the error message string. The same problem occurs when it comes to the line number indicating where it failed. 
+	Because an accurate line number is not given in the error message, users need to go through the stack trace to find 
+	where the error actually happened. On the other hand, if a function with a spec fails, an exception object {\tt 
+	clojure.lang.ExceptionInfo} is thrown. This exception object has a hash map of failure information, which can easily be 
+	parsed with Clojure {\tt ex-data} function. 
+
+	One prerequisite to provide user-friendly error messages is having enough information about the function failure. Since 
+	default Clojure error does not provide sufficient data such as the name of failing function or the failing value, our 
+	research group had to use some sort of global state to store extra information. With clojure.spec, we no longer need a 
+	global variable because the hash map of {\tt clojure.lang.ExeptoinInfo} object has much more information about the 
+	failure compared to the default Clojure error. The information that the hash map provides contains which predicate it 
+	failed, which the failing value was, and where the value was in the argument sequence if the function takes multiple 
+	arguments. In addition, they can be easily parsed as we explained earlier.
+	
+	\subsection{Approaches to improve error messages}
+	With clojure.spec, we have used two different approaches to improve error messages. One way is using a function spec. 
+	If we write function specs that are attached to the Clojure core functions, the spec error is thrown when some function 
+	call fails. Then, we can parse the spec error and process it before we show them to the user. For instance, min function 
+	takes one or more numbers, and returns the least number. We can verify the input of the min function by providing a 
+	function spec like following:
+
+	\begin{verbatim}
+	(s/fdef clojure.core/min
+	:args (s/cat :check-numbers (s/+ number?)))
+	\end{verbatim}
+
+	The main advantage of using a function spec is that we do not need to overwrite core functions. We attach our 
+	function specs to the Clojure core functions and simply turn on the spec checking. It is also very flexible because we 
+	can turn on and off the spec checking. We eventually decided to use the second approach, using spec assert, after we 
+	discovered some issues with the function spec. Function specs do not work for inline functions. Many of Clojure core 
+	arithmetic functions are inline functions for better performance. Beginners often use arithmetic functions, including +, -, 
+	or *, so not using specs for them is a huge downside. Also, function specs seem to have some problems dealing with 
+	lazy sequences. 
+
+	\todo{s/spec overwrites Clojure functions. But they seem promising (no inline or lazy-seq issue)}
 
 \section{Conclusions and future work}
 	\subsection{Conclusions}
