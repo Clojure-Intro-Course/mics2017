@@ -439,24 +439,35 @@ just mentioning why checking lazy sequences is hard (we need to evaluate some fo
 	Many of Clojure core arithmetic functions are inline functions for better performance. 
 	Beginners often use arithmetic functions, including {\tt +}, {\tt -}, and {\tt *}, 
 	so not being able to use specs for them is a huge downside of the function spec. 
-	Also, function specs seem to have some problems dealing with lazy sequences. 
+	Moreover, function specs seem to have some problems dealing with lazy sequences. When a lazy sequence, 
+	that has an error inside, is passed to the function as an argument, the Clojure default error is thrown. 
+	For example, let's revisit the {\tt even} function that we explained in Section 2.2. 
+	The {\tt even} function has an attached spec.
+	\begin{verbatim}
+	(even? (map even? [3 4 true]))
+	\end{verbatim}
+	The function {\tt map} simply applies the {\tt even} function to each of the elements, in this case, 3, 4, and true.
+	As a result of its computation, {\tt map} returns a lazy sequence.
+	First, the argument of outer {\tt even?} is checked. Then, the lazy sequence {\tt (map even? [3 4 true])} is
+	evaluated in some internal Clojure spec checking space. The problem is the function spec for {\tt even?} does not exist
+	when the inner {\tt (even? true)} is evaluated. Therefore, the default {\tt java.lang.IllegalArgumentException} is thrown.
 
 	Because of the issues mentioned above, our research team is currently using {\tt s/assert} in lieu of the function spec.
 	This approach is very similar to our pre-spec approach that uses {\tt :pre} and requires overwriting 
 	Clojure core functions. However, we can solve the issues concerning to inline functions in that 
-	the spec checks the overwritten function's input before the call to the core function is made. 
+	the {\tt s/assert} checks the overwritten function's input before the call to the core function is made. 
 	
 	Following is the overwritten {\tt min} with spec assert. The function {\tt do} just evaluates
 	the expressions in order, which means the s/assert is checked prior to the function call to {\tt clojure.core/min}.
-	
 	\begin{verbatim}
 	(defn min [arg1 & args]
   		(do 
     		(s/assert (s/cat :check-numbers (s/+ number?)) [arg1 args])
     		(apply clojure.core/min arg1 args)))
 	\end{verbatim} 
-	
-	\todo{This also solves lazy-seq issue}
+	Just like the function spec, {\tt s/assert} starts validating data once the switch is turned on by {\tt (s/check-asserts true)}
+	Because our {\tt s/assert} is embedded inside the overwritten function, lazy sequence checking is not
+	an issue anymore as in the function spec.
 	
 	
 	
