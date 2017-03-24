@@ -147,8 +147,8 @@ TBD
 \section{Background}
 	This section is an introduction to Clojure and the clojure.spec library. 
 	\subsection{Clojure}
-	A LISP-dialect Clojure has some distinct features in comparison to other popular languages such as Java or Python.
-	\emcomment{This is an awkward sentence, rewrite? } \tscomment{Resolved?}
+	A Lisp-dialect Clojure has some distinct features in comparison to other popular languages such as Java or Python.
+	%\emcomment{This is an awkward sentence, rewrite? } \tscomment{Resolved?}
 	One is the use of parentheses in syntax. In Clojure, every instruction or expression is enclosed in parentheses. To invoke a 
 	function, you need to specify a function name right after the opening parenthesis and then list all arguments before the 
 	closing parenthesis. Parentheses are required even for functions that do not take any arguments. This form of notation is 
@@ -156,19 +156,23 @@ TBD
 	\begin{verbatim}
 	(+ 3 4)
 	\end{verbatim}
-	In Clojure, \texttt{+} is a just function not a special operator. This syntax might look odd, but it is very powerful and easy to parse for machines since the system does not need to 
-	calculate operator precedence. Also, it easily accommodates a variable number of arguments. \emcomment{Mention that + is a function; the syntax is also convenient since it easily accommodates a variable number of arguments} \tscomment{Resolved?}
+	In Clojure, \texttt{+} is a just function, not a special operator. This syntax might look odd, but it is very powerful and easy to parse for machines since the system does not need to 
+	calculate operator precedence. Also, it easily accommodates a variable number of arguments.
+% \emcomment{Mention that + is a function; the syntax is also convenient since it easily accommodates a variable number of %arguments} \tscomment{Resolved?}
+	\emcomment{Give an example of a variable number of args}
 	
 	Defining a function is very intuitive in Clojure. Inside a pair of parentheses, you list \texttt{defn} macro, \texttt{[args]}, 
-	and the expression in order. An example of a function that multiplies the given number by two looks like:
+	and the expression in order. \emcomment{Need to explain what each of these elements is, 
+	explain the meaning of the function below, and point to all of its elements}
+	An example of a function that multiplies the given number by two looks like:
 	 \begin{verbatim}
 	(defn multiply-2 [n] (* n 2))
 	\end{verbatim}
 
 	Another functional programming feature that Clojure adopted is immutable data structures. In Clojure, once you bind a 
 	name to a value, you cannot change the associated value.  
-	\emcomment{I would remove the previous two sentences: don't need this level of detail. }
-	\tscomment{Resolved?}
+	%\emcomment{I would remove the previous two sentences: don't need this level of detail. }
+	%\tscomment{Resolved?}
 	This is the main source of confusion for developers from object oriented programming background since they are used to 
 	change values of a variable. One huge benefit of using immutable data types is minimizing side effects, which means 
 	developers do not need to worry about variables being modified from unanticipated places.
@@ -186,8 +190,8 @@ TBD
 	(defn fibonacci [n1 n2]
 	   (lazy-seq (cons n1 (fibonacci n2 (+ n1 n2))))
 	\end{verbatim}
-	\emcomment{You need to introduce a bit of Clojure syntax for a function definition, you can't just jump to this.}
-	\tscomment{Resolved?}
+	%\emcomment{You need to introduce a bit of Clojure syntax for a function definition, you can't just jump to this.}
+	%\tscomment{Resolved?}
 	
 	\subsection{Introduction to clojure.spec}
 	The newly introduced cloure.spec library is a contract system that allows Clojure developers to specify and validate expected data 
