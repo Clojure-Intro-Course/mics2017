@@ -568,13 +568,14 @@ Switching from this approach to clojue.spec has created some issues that we will
 	handling that relies on features embedded in the language itself, rather than in a separate system. 
 
 	\subsection{Future work}
-	There are still, however, many challenges to overcome before Clojure can be easily adopted 
+	There are still many challenges to overcome before Clojure can be easily adopted 
 	in an introductory CS classroom. One of the future directions of our work is to continue evaluating what 
 	error messages are helpful to beginners. Another significant roadblock is a lack of a beginner-friendly IDE 
 	for Clojure, despite the effort of the Clojure community to develop one. Another challenge is to figure out which 
 	features of Clojure should be available to beginners: another relatively new Clojure feature, known as transducers, 
 	makes certain expressions that beginners can write by mistake be syntactically valid, but almost certainly unintended 
-	and confusing. Whether it is possible to ``hide'' these  
+	and confusing. Whether it is possible to ``hide'' these  features from beginners, ideally by using clojure.spec,
+	 is a subject of future work. 
 	
 \bibliographystyle{acm}
 \bibliography{mics2017}
