@@ -235,33 +235,32 @@ TBD
 	\subsection{Introduction to clojure.spec}
 	The newly introduced cloure.spec library is a contract system that allows Clojure developers to specify and validate expected data 
 	%\emcomment{I'd say, expected data, not (just) data types}\tscomment{Resolved?} 
-	at runtime. In addition to data validation, clojure.spec provides easy-to-parse error messages when data is invalid. Each spec is just a 				 
-	specification for data, so any predicate functions can be used as spec predicates. 
-	\emcomment{I am not sure what the previous sentence means}
+	at runtime. In addition to data validation, clojure.spec provides easy-to-parse error messages when data is invalid. 
+	To start using specs, we need to define a spec first. Each spec is just a specification for data.
+	You can use \texttt{s/def} to define specs.
 
-	\texttt{s/def} is used to define specs. Following are 
-	some simple spec definitions with Clojure predicates:
+	Following are some simple spec definitions with Clojure predicates:
 	\begin{verbatim}
 	(s/def ::check-int integer?)
 	(s/def ::check-function ifn?)
 	\end{verbatim}
-	\emcomment{show how these are used to validate data (before you talk about more complicated specs)}
+	You can use the above spec definitions to check data types with {\tt s/valid?}, which returns a boolean.
+	If the data is satisfies the spec, {\tt s/valid?} returns true. Otherwise, it returns false. For example, 
+	{\tt (s/valid? ::check-int 3.5)} will return {\tt false} because {\tt 3.5} is not an integer number.
+	
 	It is possible to assemble simple specs to create a more complicated spec. For instance, we can write a spec that verifies 
 	the argument types of a function by combining \texttt{::check-int} and \texttt{::check-function} with \texttt{s/cat} 
 	which stands for concatenation. 
 	\begin{verbatim}
-	(s/def ::check-int-function 
-		(s/cat :first-arg ::check-int 
-		          :second-arg ::check-function))
+(s/def ::check-int-function 
+    (s/cat :first-arg ::check-int 
+           :second-arg ::check-function))
 	\end{verbatim}
-	If the above spec is attached to a function that takes two arguments, {\tt (function-name 4 odd?)} will be valid because 
-	the first argument 4 is an integer and the second argument {\tt odd?} is a function.
-	\emcomment{The question mark in the name is confusing. Perhaps show an example with just odd? first, go over what it is. 
-	Also use some actual name, like myfunction, rather than function-name}
-	%\emcomment{show what the above example validates: what data is valid? }\tscomment{Resolved?}
+	If the above spec is attached to a function {\tt my-function} that takes two arguments, 
+	{\tt (my-function 4 +)} will be valid 
+	because the first argument {\tt 4} is an integer and the second argument {\tt +} is a function.
 	
-	One really powerful feature of spec is the use of regular operators such as \texttt{s/cat}, \texttt{s/*}, and \texttt{s/?}. 
-	\emcomment{Mention what the other two stand for.}\tscomment{Resolved?}
+	One really powerful feature of spec is the use of regular operators such as \texttt{s/cat}, \texttt{s/*}, and \texttt{s/?}.
 	\texttt{s/*} represents zero or more of a data pattern, and \texttt{s/?} represents zero or one of a data pattern.
 	Using these regular operators, we can describe a variety of data structures, including lazy sequences and nested data. 
 
@@ -271,8 +270,6 @@ TBD
 	Otherwise, the spec is completely ignored at runtime. Let's take a look at an example of using \texttt{s/fdef}. Following 
 	are a simplified definition of \texttt{even?} function and a possible function spec for it. Whenever \texttt{even?} function
 	is called, the spec is invoked and checks if the argument is an integer.
-	%\emcomment{Move the two following sentences elsewhere (you can talk about instrumenting at the beginning or the end of the section)} 
-	%\tscomment{I just moved it to the top of the paragraph. I feel like it still belongs to this paragraph.}
 	
 	\begin{verbatim}
 	(defn even? [n] (= (mod n 2) 0))
