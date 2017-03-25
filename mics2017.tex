@@ -453,7 +453,7 @@ Switching from this approach to clojue.spec has created some issues that we will
 
 \section{Improving error messages with clojure.spec}\label{sec:spec-errors}
 	\subsection{Benefits of using clojure.spec}
-	If a function, to which a spec is not attached, fails,
+	If there is no spec attached to a function, and the function fails,
 	it throws an error which has the information about the type of error, error message, and stack 
 	trace. The value that caused the error is rarely given in the error message.
 	Let's say a user tried to add {\tt 2} to {\tt true}. Because addition only works for numbers, 
@@ -476,7 +476,8 @@ Switching from this approach to clojue.spec has created some issues that we will
 	\end{verbatim}
 	The stored information included:
 	\begin{itemize}
-	\item {\tt :clojure.spec/problems} containing the predicate, failing value, and location of the value.
+	\item {\tt :clojure.spec/problems} containing the predicate, failing value, and location of the value 
+	(the argument number, in this case 0, which indicates that it is the first argument).
 	\item {\tt :clojure.spec/args} containing all the arguments of the function.
 	\item {\tt :clojure.spec.test/callers} containing the file name and line number.
 	\end{itemize}
@@ -558,11 +559,22 @@ Switching from this approach to clojue.spec has created some issues that we will
 
 	In the process of working with clojure.spec we have resolved several technical challenges, such as 
 	dealing with inlined functions and lazy sequences. 
-	There are still a few unresolved issues, although with clojure.spec being still in development 
+	There are still a few unresolved issues, in particular related to multiple errors (errors that happen
+	when evaluating a failing value for another error).
+	However, with clojure.spec being still in development 
 	we may just need to wait until they are resolved by the Clojure community. 
 
+	Overall, using clojure.spec has a promise of creating a robust and customizable system of error 
+	handling that relies on features embedded in the language itself, rather than in a separate system. 
+
 	\subsection{Future work}
-	\emcomment{Figure out what to do with transducers}
+	There are still, however, many challenges to overcome before Clojure can be easily adopted 
+	in an introductory CS classroom. One of the future directions of our work is to continue evaluating what 
+	error messages are helpful to beginners. Another significant roadblock is a lack of a beginner-friendly IDE 
+	for Clojure, despite the effort of the Clojure community to develop one. Another challenge is to figure out which 
+	features of Clojure should be available to beginners: another relatively new Clojure feature, known as transducers, 
+	makes certain expressions that beginners can write by mistake be syntactically valid, but almost certainly unintended 
+	and confusing. Whether it is possible to ``hide'' these  
 	
 \bibliographystyle{acm}
 \bibliography{mics2017}
