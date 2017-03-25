@@ -540,8 +540,19 @@ Switching from this approach to clojue.spec has created some issues that we will
 
 \section{Conclusions and future work}\label{sec:conclusion}
 	\subsection{Conclusions}
+	Clojure.spec provides a more appropriate approach for generating meaningful error messages than our
+	previous ad-hoc approach. It automatically collects information necessary to provide useful information 
+	about causes of errors. It is also significantly more flexible: we can easily control what kind of information
+	we present to programmers. This opens a possibility of creating multiple levels of error messages,
+	depending on programmers' experience. 
+
+	In the process of working with clojure.spec we have resolved several technical challenges, such as 
+	dealing with inlined functions and lazy sequences. 
+	There are still a few unresolved issues, although with clojure.spec being still in development 
+	we may just need to wait until they are resolved by the Clojure community. 
+
 	\subsection{Future work}
-\emcomment{Figure out what to do with transducers}
+	\emcomment{Figure out what to do with transducers}
 	
 \bibliographystyle{acm}
 \bibliography{mics2017}
