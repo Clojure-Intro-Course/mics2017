@@ -142,9 +142,31 @@ Computer Science class.
 \setcounter{page}{1}
 
 \section{Introduction}
-TBD
+Clojure is a relatively new programming language in the Lisp family, introduced by a developer Rich Hickey in 2007~\cite{Hickey:2008}. 
+It quickly gained a worldwide popularity in industry and has a large and very active community of developers. 
+As a Lisp language, Clojure follows functional methodology with an emphasis on immutability, functional abstraction, and recursion -- 
+concepts that are essential in CS education, as discussed in~\cite{Felleisen:2004}. 
+As such, Clojure could be suitable as a first language taught to computer science students, continuing a rich tradition of MIT Scheme~\cite{Abelson},
+on par with the Racket programming language, also in the Lisp category~\cite{htdp}. 
 
-\section{Background}
+However, there are several issues that make introducing Clojure to beginner programmers quite challenging. 
+The most notorious of these issues is the lack of beginner-friendly error messages. 
+Our research group at University of Minnesota, Morris (UMM) has been working on developing a system of error messages
+that are helpful to beginners. 
+As our work on this system was progressing, Clojure has introduced a new feature that would allow us to interface
+with Clojure core much easier. 
+This feature is a system of contracts for data validation known as clojure.spec.
+Thus our current goal is to transition our older ad-hoc system of collecting information about an error 
+to clojure.spec. 
+This paper presents a comparison between the two approaches and demonstrates our current progress 
+in this transition, including some challenges that we have overcome. 
+
+The paper proceeds as following: Section~\ref{sec:background} introduces Clojure and clojure.spec, 
+Section~\ref{sec:current} presents our system of error processing before clojure.spec, 
+Section~\ref{sec:spec-errors} discusses the new approach, and Section~\ref{sec:conclusion} summarizes our 
+current progress and discusses future work. 
+
+\section{Background}\label{sec:background}
 	This section is an introduction to Clojure and the clojure.spec library. 
 	\subsection{Clojure}\label{sec:clojure}
 	Clojure is a Lisp-dialect with some distinct features in comparison to other popular languages, such as Java or Python.
@@ -283,7 +305,7 @@ TBD
 	
 
 
-\section{Clojure error messages}
+\section{Clojure error messages}\label{sec:current}
 \subsection{Overview of Clojure error messages and our approaches}
 Since Clojure compiles to Java bytecodes and runs on the JVM, Clojure error messages are just Java exceptions
 and uses Java datatypes and terminology. 
@@ -429,7 +451,7 @@ Switching from this approach to clojue.spec has created some issues that we will
 %\tscomment{Spec-specific issues (inline-functions) will be explained in 'Approaches to improve error messages'. I think 
 %just mentioning why checking lazy sequences is hard (we need to evaluate some for checking) is sufficient?}
 
-\section{Improving error messages with clojure.spec}
+\section{Improving error messages with clojure.spec}\label{sec:spec-errors}
 	\subsection{Benefits of using clojure.spec}
 	If a function, to which a spec is not attached, fails,
 	it throws an error which has the information about the type of error, error message, and stack 
@@ -526,7 +548,7 @@ Switching from this approach to clojue.spec has created some issues that we will
 	
 	
 
-\section{Conclusions and future work}
+\section{Conclusions and future work}\label{sec:conclusion}
 	\subsection{Conclusions}
 	\subsection{Future work}
 \emcomment{Figure out what to do with transducers}
