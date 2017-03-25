@@ -446,30 +446,40 @@ one of the functions that forces an evaluation of  a lazy sequence, is {\tt prin
 an infinite (or just very long) sequence accidentally when printing the error message. 
 We handle this issue with a preview function that evaluates only the first up to 10 elements of the sequence.
 
-Switching from this approach to clojue.spec has created some issues that we will discuss in Section \emcomment{add a reference}
+Switching from this approach to clojue.spec has created some issues that we will discuss in Section~\ref{sec:approach}
 
 %\tscomment{Spec-specific issues (inline-functions) will be explained in 'Approaches to improve error messages'. I think 
 %just mentioning why checking lazy sequences is hard (we need to evaluate some for checking) is sufficient?}
 
 \section{Improving error messages with clojure.spec}\label{sec:spec-errors}
 	\subsection{Benefits of using clojure.spec}
-	If a function, to which a spec is not attached, fails 
+	If a function, to which a spec is not attached, fails,
 	it throws an error which has the information about the type of error, error message, and stack 
 	trace. The value that caused the error is rarely given in the error message.
-	Let's say a user tried to add {\tt 2} to {\tt true}. Because addition only works for number, 
+	Let's say a user tried to add {\tt 2} to {\tt true}. Because addition only works for numbers, 
 	{\tt true} of type boolean is the value that caused the error or the 'failing value' in this case.
 	Even when the failing value is given, we still need to parse the specific value out of 
 	the error message string. The same problem occurs when it comes to the line number indicating where it failed. 
 	Because an accurate line number is not given in the error message, users need to go through the stack trace to find 
-	where the error actually happened. 
-	\emcomment{Refer to section~\ref{sec:assert}}
+	where the error actually happened. We used to handle these issues by providing assertions as we explained in Section~\ref{sec:assert}.
 
-	On the other hand, if a spec-attached function fails, an exception object 
+	Unlike default Clojure errors, if a spec-attached function fails, an exception object 
 	\newline	
 	{\tt clojure.lang.ExceptionInfo} is thrown. 
 	This exception object has a hash map of failure information, which can easily be 
-	parsed with Clojure {\tt ex-data} function. 
-	\emcomment{show a simplified example}
+	parsed with Clojure {\tt ex-data} function. A simplified hash map of a spec error 
+	for the {\tt (even? false)} function call might look like:
+	\begin{verbatim}
+	{:clojure.spec/problems [:pred integer?, :val false, :in [0]}], 
+	 :clojure.spec/args (false), 
+	 :clojure.spec.test/caller {:file "spec_error.clj", :line 87}}
+	\end{verbatim}
+	The stored information included:
+	\begin{itemize}
+	\item {\tt :clojure.spec/problems} containing the predicate, failing value, and location of the value.
+	\item {\tt :clojure.spec/args} containing all the arguments of the function.
+	\item {\tt :clojure.spec.test/callers} containing the file name and line number.
+	\end{itemize}
 
 	One prerequisite to provide user-friendly error messages is having enough information about the function failure. Since 
 	default Clojure error does not provide sufficient data such as the name of failing function or the failing value, our 
@@ -478,9 +488,9 @@ Switching from this approach to clojue.spec has created some issues that we will
 	has much more information about the 
 	failure compared to the default Clojure error. The information that the embedded hash map provides contains which predicate it 
 	failed, what the failing value was, and what the number of the argument was (if the function takes multiple arguments). 
-	In addition, they can be easily parsed, as we mentioned earlier.
+	In addition, they can be easily parsed, as we mentioned earlier. 
 	
-	\subsection{Approaches to improve error messages}
+	\subsection{Approaches to improve error messages}\label{sec:approach}
 	With clojure.spec, we have used two different approaches to improve error messages. One way is using a function spec. 
 	If function specs are attached to the Clojure core functions, the spec error is thrown when some core function 
 	call fails. Then, we can simply parse necessary information from the hash map embedded in the spec error, and 
