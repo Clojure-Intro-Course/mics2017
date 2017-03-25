@@ -113,26 +113,25 @@ songx823@morris.umn.edu, elenam@morris.umn.edu
 %\alcomment{Should these say @morris.umn.edu?}
 
 \section*{\centering Abstract}
-Functional programming paradigms have been getting mainstream attention recently because of its elegant concurrency 
-handling and conciseness of source code. To introduce functional programming and the basic principles of Computer 
-Science, a language system based on the Racket programming language in the Lisp family is currently used in an introductory 
-Computer Science class at the University of Minnesota, Morris. Even though the current Racket based environment is a 
-beginner friendly system with stepwise modes for different levels of learners, it is not widely used in the industry and 
-students often have difficulties in transitioning from Racket to Java which is used in mid and upper level Computer Science 
-classes at UMM. To solve those issues, a research group at UMM has been working on making a beginner friendly environment 
-of the Clojure programming language, which is also in the Lisp family like Racket, to use the language in the introductory 
-Computer Science class.
-
-We chose Clojure in lieu of Racket since it is a functional programming language that has quickly gained popularity 
-in the industry and it primarily runs on the Java Virtual Machine. One challenge that the project tries to deal with is its error messages. 
-Compared to Racket’s plain English error messages, Clojure error messages use many Java terms, 
-which often scare programming novices. To improve error messages, it is essential to collect more data such as line number so
-that our system can provide more useful and informative error messages instead of letting users parse information from 
-stack trace. clojure.spec is a newly introduced core library of Clojure that allows developers to specify conditions for function 
-inputs and data. If the condition fails, clojure.spec constructs a very informative error message. Using clojure.spec is a 
-substantial improvement over our previous system in that the acquired information from clojure.spec can directly be 
-used to improve error messages after some processing.
-
+Functional programming paradigms have been getting mainstream attention recently because of their elegant concurrency 
+handling and conciseness of source code. 
+University of Minnesota, Morris has a strong tradition of using functional programming languages, in particular those
+ in the Lisp family, in the introductory CS curriculum.
+A Lisp language is often the very first language that our majors encounter.  
+Clojure is a relatively new language in the Lisp family that is becoming increasingly popular nationally 
+and worldwide. 
+While it would be desirable to use Clojure as a beginner language in CS curriculum, there 
+are several challenges in adopting it for novice programmers. 
+One of the most significant challenges is its error messages system which uses terminology and concepts
+that are unfamiliar to beginners. 
+A current project at UMM aims at developing a system of beginner-friendly error messages for Clojure. 
+A recently added system of contracts in Clojure, known as clojure.spec, is the evidence that Clojure community 
+at large is also interested in improving error reporting.
+This system came out in summer 2016, and we have been exploring its ability to facilitate more robust and 
+flexible error messages, in particular aimed at helping beginners. 
+This paper describes our current system of providing beginner-friendly information in error messages 
+and presents our recent work
+on switching to clojure.spec for this purpose. 
 
 \newpage
 \setcounter{page}{1}
@@ -151,10 +150,10 @@ Our research group at University of Minnesota, Morris (UMM) has been working on 
 that are helpful to beginners. 
 As our work on this system was progressing, Clojure has introduced a new feature that would allow us to interface
 with Clojure core much easier. 
-This feature is a system of contracts for data validation known as clojure.spec.
+This feature is a system of contracts for data validation, known as clojure.spec.
 Thus our current goal is to transition our older ad-hoc system of collecting information about an error 
 to clojure.spec. 
-This paper presents a comparison between the two approaches and demonstrates our current progress 
+This paper presents a comparison between our two approaches and demonstrates our current progress 
 in this transition, including some challenges that we have overcome. 
 
 The paper proceeds as following: Section~\ref{sec:background} introduces Clojure and clojure.spec, 
