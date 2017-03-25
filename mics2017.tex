@@ -333,7 +333,7 @@ For this paper we are focusing on the first case: providing an assertion to chec
 arguments. We discuss how we have been handling this situation in the past and how using clojure.spec 
 allows us to collect the same information as before (and sometimes more) in a way that is less error-prone. 
 
-\subsection{Assertions for common Clojure functions}
+\subsection{Assertions for common Clojure functions}\label{sec:assert}
 The approach to providing assertions to check function arguments that we used prior to 
 incorporating clojure.spec was to write our own function with the same name as a standard one, 
 provide a precondition for it to check if the arguments are valid, and if they are, call 
@@ -419,32 +419,32 @@ just mentioning why checking lazy sequences is hard (we need to evaluate some fo
 
 \section{Improving error messages with clojure.spec}
 	\subsection{Benefits of using clojure.spec}
-	If a function, which a spec is not attached, \emcomment{unclear what you mean by non-spec function} fails,
-	\tscomment{Resolved?} 
+	If a function, to which a spec is not attached, fails 
 	it throws an error which has the information about the type of error, error message, and stack 
-	trace. The value that caused the error is rarely given in the error. 
-	\emcomment{Give a short example of what you mean by a failing value}\tscomment{Resolved?}
-	Let's say a user tried to add {\tt 3} to {\tt true}. Because addition only works for number, 
+	trace. The value that caused the error is rarely given in the error message.
+	Let's say a user tried to add {\tt 2} to {\tt true}. Because addition only works for number, 
 	{\tt true} of type boolean is the value that caused the error or the 'failing value' in this case.
 	Even when the failing value is given, we still need to parse the specific value out of 
 	the error message string. The same problem occurs when it comes to the line number indicating where it failed. 
 	Because an accurate line number is not given in the error message, users need to go through the stack trace to find 
 	where the error actually happened. 
+	\emcomment{Refer to section~\ref{sec:assert}}
 
-	On the other hand, if a spec-attached function fails, an exception object {\tt clojure.lang.ExceptionInfo} is thrown. 
+	On the other hand, if a spec-attached function fails, an exception object 
+	\newline	
+	{\tt clojure.lang.ExceptionInfo} is thrown. 
 	This exception object has a hash map of failure information, which can easily be 
-	parsed with Clojure {\tt ex-data} function. \emcomment{did we explain what a hashmap is?}
-	
-	\tscomment{Should be explained in Background}
+	parsed with Clojure {\tt ex-data} function. 
+	\emcomment{show a simplified example}
 
 	One prerequisite to provide user-friendly error messages is having enough information about the function failure. Since 
 	default Clojure error does not provide sufficient data such as the name of failing function or the failing value, our 
-	research group had to use some sort of global state to store extra information as we explained in Section 3.2. 
+	research group had to use a global variable to store this information, as we explained in Section~\ref{sec:assert}. 
 	With clojure.spec, we no longer need a global variable because the hash map of {\tt clojure.lang.ExeptoinInfo} object 
 	has much more information about the 
 	failure compared to the default Clojure error. The information that the embedded hash map provides contains which predicate it 
-	failed, which the failing value was, and where the value was in the argument sequence if the function takes multiple 
-	arguments. In addition, they can be easily parsed as explained earlier.
+	failed, what the failing value was, and what the number of the argument was (if the function takes multiple arguments). 
+	In addition, they can be easily parsed, as we mentioned earlier.
 	
 	\subsection{Approaches to improve error messages}
 	With clojure.spec, we have used two different approaches to improve error messages. One way is using a function spec. 
@@ -458,22 +458,26 @@ just mentioning why checking lazy sequences is hard (we need to evaluate some fo
 	(s/fdef clojure.core/min
 		:args (s/cat :check-numbers (s/+ number?)))
 	\end{verbatim}
+	\emcomment{Explain what it means}
 
 	The main advantage of using a function spec is that we do not need to overwrite Clojure core functions. We can simply attach our 
 	function specs to the Clojure core functions. It is also very flexible in that it can be turned off if necessary. 
 	We eventually decided to use another approach, using spec assert, after we 
-	discovered some issues with the function spec. One serious issue is that function specs do not work for inline functions. 
-	Many of Clojure core arithmetic functions are inline functions for better performance. 
+	discovered some issues with the simpler approach of just using a function spec. 
+	One serious issue is that function specs do not work for inline functions.
+	Many of Clojure core arithmetic functions are inline functions for better performance.
+	\emcomment{add one sentence explanation of what that means}
 	Beginners often use arithmetic functions, including {\tt +}, {\tt -}, and {\tt *}, 
 	so not being able to use specs for them is a huge downside of the function spec. 
-	Moreover, function specs seem to have some problems dealing with lazy sequences. When a lazy sequence, 
+	Moreover, function specs have problems dealing with lazy sequences. When a lazy sequence, 
 	that has an error inside, is passed to the function as an argument, the Clojure default error is thrown. 
-	For example, let's revisit the {\tt even} function that we explained in Section 2.2. 
-	The {\tt even} function has an attached spec.
+	For example, let's revisit the {\tt even?} function that we explained in Section 2.2. 
+	The {\tt even?} function has an attached spec.
 	\begin{verbatim}
 	(even? (map even? [3 4 true]))
 	\end{verbatim}
-	The function {\tt map} simply applies the {\tt even} function to each of the elements, in this case, 3, 4, and true.
+	The function {\tt map} simply applies the {\tt even?} function to each of the elements, in this case, 3, 4, and true.
+	\emcomment{Need to explain what map does - show an example}
 	As a result of its computation, {\tt map} returns a lazy sequence.
 	First, the argument of outer {\tt even?} is checked. Then, the lazy sequence {\tt (map even? [3 4 true])} is
 	evaluated in some internal Clojure spec checking space. The problem is the function spec for {\tt even?} does not exist
