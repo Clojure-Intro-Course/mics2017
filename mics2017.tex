@@ -101,7 +101,7 @@
 % References or any Appendices.
 
 \author{
-Tony Song and Elena Machkasova \\
+Myeongjae Song and Elena Machkasova \\
 Computer Science Discipline \\
 University of Minnesota Morris\\
 Morris, MN 56267\\
@@ -114,7 +114,7 @@ songx823@morris.umn.edu, elenam@morris.umn.edu
 
 \section*{\centering Abstract}
 Functional programming paradigms have been getting mainstream attention recently because of its elegant concurrency 
-handling and conciseness of source code. To introduce functional programming and teach the basic principles of Computer 
+handling and conciseness of source code. To introduce functional programming and the basic principles of Computer 
 Science, a language system based on the Racket programming language in the Lisp family is currently used in an introductory 
 Computer Science class at the University of Minnesota, Morris. Even though the current Racket based environment is a 
 beginner friendly system with stepwise modes for different levels of learners, it is not widely used in the industry and 
@@ -123,19 +123,15 @@ classes at UMM. To solve those issues, a research group at UMM has been working 
 of the Clojure programming language, which is also in the Lisp family like Racket, to use the language in the introductory 
 Computer Science class.
 
-%We decided to use Clojure in lieu of Racket since it is a functional programming language that has quickly gained popularity 
-%in the industry and it primarily runs on the Java Virtual Machine. Students can benefit from a large amount of Clojure 
-%resources and the big developer community. One challenge that the project tries to deal with is its error messages. 
-%Compared to Racket’s plain English error messages, Clojure has less user friendly error messages with many Java terms, 
-%which often scare programming novices. Thus, our research team has been focusing on improving Clojure error messages for 
-%the last few years. To improve error messages, it is essential to collect more data such as failing values and line number so 
-%that our system can provide more useful and informative error messages instead of letting users parse information from 
-%stack trace. Clojure.spec is a newly introduced core library of Clojure that allows developers to specify conditions for function 
-%inputs and data. If the condition fails, clojure.spec constructs a very informative error message. Using clojure.spec is a 
-%substantial improvement over our previous system, which had to keep track of extra information manually since there was no 
-%embedded Clojure feature for it. The acquired information from clojure.spec can directly be used to improve error messages 
-%after some processing. The paper will show how we use clojure.spec to collect and display the right information and 
-%demonstrates the resulting error messages.
+We chose Clojure in lieu of Racket since it is a functional programming language that has quickly gained popularity 
+in the industry and it primarily runs on the Java Virtual Machine. One challenge that the project tries to deal with is its error messages. 
+Compared to Racket’s plain English error messages, Clojure error messages use many Java terms, 
+which often scare programming novices. To improve error messages, it is essential to collect more data such as line number so
+that our system can provide more useful and informative error messages instead of letting users parse information from 
+stack trace. clojure.spec is a newly introduced core library of Clojure that allows developers to specify conditions for function 
+inputs and data. If the condition fails, clojure.spec constructs a very informative error message. Using clojure.spec is a 
+substantial improvement over our previous system in that the acquired information from clojure.spec can directly be 
+used to improve error messages after some processing.
 
 
 \newpage
