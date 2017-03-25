@@ -500,18 +500,19 @@ Switching from this approach to clojue.spec has created some issues that we will
 	function spec like following:
 
 	\begin{verbatim}
-	(s/fdef clojure.core/min
-		:args (s/cat :check-numbers (s/+ number?)))
+(s/fdef clojure.core/min
+    :args (s/cat :check-numbers (s/+ number?)))
 	\end{verbatim}
-	\emcomment{Explain what it means}
+	This function spec definition checks if {\tt clojure.core/min} function takes at least one argument 
+	and if all arguments are type of {\tt number}.
 
 	The main advantage of using a function spec is that we do not need to overwrite Clojure core functions. We can simply attach our 
 	function specs to the Clojure core functions. It is also very flexible in that it can be turned off if necessary. 
 	We eventually decided to use another approach, using spec assert, after we 
 	discovered some issues with the simpler approach of just using a function spec. 
-	One serious issue is that function specs do not work for inline functions.
+	One serious issue is that function specs do not work for inline functions, which are the type of function 
+	that is inserted by the complier when they get to be used.
 	Many of Clojure core arithmetic functions are inline functions for better performance.
-	\emcomment{add one sentence explanation of what that means}
 	Beginners often use arithmetic functions, including {\tt +}, {\tt -}, and {\tt *}, 
 	so not being able to use specs for them is a huge downside of the function spec. 
 	Moreover, function specs have problems dealing with lazy sequences. When a lazy sequence, 
@@ -521,9 +522,14 @@ Switching from this approach to clojue.spec has created some issues that we will
 	\begin{verbatim}
 	(even? (map even? [3 4 true]))
 	\end{verbatim}
-	The function {\tt map} simply applies the {\tt even?} function to each of the elements, in this case, 3, 4, and true.
-	\emcomment{Need to explain what map does - show an example}
-	As a result of its computation, {\tt map} returns a lazy sequence.
+	
+	The function {\tt map} normally takes two arguments, a function and a collection of elements. 
+	What it does is simply applying the given function to each of the collection's element. 
+	If there is an expression {\tt (map even? [1 2 3])}, the {\tt even?} function is applied to 1, 2, and 3.
+	As a result of its computation, {\tt map} returns a lazy sequence of false, true, and false
+	because only 2 is an even number.
+	
+	Let's go back to the above example using two {\tt even?} functions. 
 	First, the argument of outer {\tt even?} is checked. Then, the lazy sequence {\tt (map even? [3 4 true])} is
 	evaluated in some internal Clojure spec checking space. The problem is the function spec for {\tt even?} does not exist
 	when the inner {\tt (even? true)} is evaluated. Therefore, the default {\tt java.lang.IllegalArgumentException} is thrown.
@@ -546,9 +552,6 @@ Switching from this approach to clojue.spec has created some issues that we will
 	an issue anymore as in the function spec.
 	
 	
-	
-	
-
 \section{Conclusions and future work}\label{sec:conclusion}
 	\subsection{Conclusions}
 	Clojure.spec provides a more appropriate approach for generating meaningful error messages than our
