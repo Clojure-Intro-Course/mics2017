@@ -245,7 +245,7 @@ current progress and discusses future work.
 	\end{verbatim}
 	In this example:
 	\begin{itemize}
-	\item The curly braces represent that this is a hash map
+	\item The curly braces represent that this is a hash map.
 	\item {\tt :csci3501} and {\tt :csci2101} are the keys.
 	\item {\tt "Algorithms"} and {\tt  "Data Structures"} are the values.
 	\end{itemize}
@@ -254,17 +254,17 @@ current progress and discusses future work.
 	The cloure.spec library introduced in Clojure 1.9 in May 2016~\cite{spec}, and technically still in development,  is a contract system that allows 
 	Clojure developers to specify and validate expected data 
 	%\emcomment{I'd say, expected data, not (just) data types}\tscomment{Resolved?} 
-	at runtime. In addition to data validation, clojure.spec provides easy-to-parse error messages when data is invalid. 
+	at runtime. In addition to data validation, clojure.spec provides easy-to-parse error messages when the data is invalid. 
 	To start using specs, we need to define a spec first. Each spec is just a specification for data.
 	You can use \texttt{s/def} to define specs.
 
-	Following are some simple spec definitions with Clojure predicates:
+	The following are some simple spec definitions with Clojure predicates:
 	\begin{verbatim}
 	(s/def ::check-int integer?)
 	(s/def ::check-function ifn?)
 	\end{verbatim}
 	You can use the above spec definitions to check data types with {\tt s/valid?}, which returns a boolean.
-	If the data is satisfies the spec, {\tt s/valid?} returns true. Otherwise, it returns false. For example, 
+	If the data satisfies the spec, {\tt s/valid?} returns true. Otherwise, it returns false. For example, 
 	{\tt (s/valid? ::check-int 3.5)} will return {\tt false} because {\tt 3.5} is not an integer number.
 	
 	It is possible to assemble simple specs to create a more complicated spec. For instance, we can write a spec that verifies 
@@ -284,10 +284,10 @@ current progress and discusses future work.
 	Using these regular operators, we can describe a variety of data structures, including lazy sequences and nested data. 
 
 	To define input and output specifications for functions, clojure.spec uses \texttt{s/fdef}. Even though it is possible to 
-	define the output spec for a function, it is only usable in spec testing. For our purpose, we will be focused on the input 
+	define the output spec for a function, it is only usable in spec testing. For our purposes, we will be focused on the input 
 	verification. To start spec input validation of a function, it should be turned on by \texttt{(stest/instrument `function-name)}. 
-	Otherwise, the spec is completely ignored at runtime. Let's take a look at an example of using \texttt{s/fdef}. Following 
-	are a simplified definition of \texttt{even?} function and a possible function spec for it. Whenever \texttt{even?} function
+	Otherwise, the spec is completely ignored at runtime. Let's take a look at an example of \texttt{s/fdef}. The following 
+	is a simplified definition of \texttt{even?} function and a possible function spec for it. Whenever \texttt{even?} function
 	is called, the spec is invoked and checks if the argument is an integer.
 	
 	\begin{verbatim}
@@ -297,8 +297,7 @@ current progress and discusses future work.
 	;; turn on the function spec
 	(stest/instrument 'even?)
 	\end{verbatim}
-	
-	
+
 
 
 \section{Clojure error messages}\label{sec:current}
@@ -483,7 +482,7 @@ Switching from this approach to clojue.spec has created some issues that we will
 	research group had to use a global variable to store this information, as we explained in Section~\ref{sec:assert}. 
 	With clojure.spec, we no longer need a global variable because the hash map of {\tt clojure.lang.ExeptoinInfo} object 
 	has much more information about the 
-	failure compared to the default Clojure error. The information that the embedded hash map provides contains which predicate it 
+	failure compared to the default Clojure error. The information that the embedded hash map provides, contains which predicate 
 	failed, what the failing value was, and what the number of the argument was (if the function takes multiple arguments). 
 	In addition, they can be easily parsed, as we mentioned earlier. 
 	
@@ -492,22 +491,22 @@ Switching from this approach to clojue.spec has created some issues that we will
 	If function specs are attached to the Clojure core functions, the spec error is thrown when some core function 
 	call fails. Then, we can simply parse necessary information from the hash map embedded in the spec error, and 
 	process it before we show them to the user. For instance, {\tt min} function 
-	takes one or more numbers, and returns the least number. We can verify the input of the {\tt min} function by providing a 
-	function spec like following:
+	takes one or more numbers, and returns the smallest number. We can verify the input of the {\tt min} function by providing a 
+	function spec like the following:
 
 	\begin{verbatim}
 (s/fdef clojure.core/min
     :args (s/cat :check-numbers (s/+ number?)))
 	\end{verbatim}
 	This function spec definition checks if {\tt clojure.core/min} function takes at least one argument 
-	and if all arguments are type of {\tt number}.
+	and if all arguments are of type {\tt number}.
 
 	The main advantage of using a function spec is that we do not need to overwrite Clojure core functions. We can simply attach our 
 	function specs to the Clojure core functions. It is also very flexible in that it can be turned off if necessary. 
-	We eventually decided to use another approach, using spec assert, after we 
+	We eventually decided to use another approach using spec assert, after we 
 	discovered some issues with the simpler approach of just using a function spec. 
-	One serious issue is that function specs do not work for inline functions, which are the type of function 
-	that is inserted by the complier when they get to be used.
+	One serious issue is that function specs do not work for inline functions, which are a type of function 
+	that is inserted by the complier when they are used.
 	Many of Clojure core arithmetic functions are inline functions for better performance.
 	Beginners often use arithmetic functions, including {\tt +}, {\tt -}, and {\tt *}, 
 	so not being able to use specs for them is a huge downside of the function spec. 
@@ -520,7 +519,7 @@ Switching from this approach to clojue.spec has created some issues that we will
 	\end{verbatim}
 	
 	The function {\tt map} normally takes two arguments, a function and a collection of elements. 
-	What it does is simply applying the given function to each of the collection's element. 
+	What it does is simply apply the given function to each of the collection's elements. 
 	If there is an expression {\tt (map even? [1 2 3])}, the {\tt even?} function is applied to 1, 2, and 3.
 	As a result of its computation, {\tt map} returns a lazy sequence of false, true, and false
 	because only 2 is an even number.
@@ -532,11 +531,11 @@ Switching from this approach to clojue.spec has created some issues that we will
 
 	Because of the issues mentioned above, our research team is currently using {\tt s/assert} in lieu of the function spec.
 	This approach is very similar to our pre-spec approach that uses {\tt :pre} and requires overwriting 
-	Clojure core functions. However, we can solve the issues concerning to inline functions in that 
+	Clojure core functions. However, we can solve the issues concerning the inline functions in that 
 	the {\tt s/assert} checks the overwritten function's input before the call to the core function is made. 
 	
 	Following is the overwritten {\tt min} with spec assert. The function {\tt do} just evaluates
-	the expressions in order, which means the s/assert is checked prior to the function call to {\tt clojure.core/min}.
+	the expressions in order, which means {\tt s/assert} is checked prior to the function call to {\tt clojure.core/min}.
 	\begin{verbatim}
 	(defn min [arg1 & args]
   		(do 
@@ -545,7 +544,7 @@ Switching from this approach to clojue.spec has created some issues that we will
 	\end{verbatim} 
 	Just like the function spec, {\tt s/assert} starts validating data once the switch is turned on by {\tt (s/check-asserts true)}
 	Because our {\tt s/assert} is embedded inside the overwritten function, lazy sequence checking is not
-	an issue anymore as in the function spec.
+	an issue anymore as in function spec.
 	
 	
 \section{Conclusions and future work}\label{sec:conclusion}
